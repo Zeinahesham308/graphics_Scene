@@ -1,0 +1,11 @@
+Model Information:
+* title:	Sea cliffs 2
+* source:	https://sketchfab.com/3d-models/sea-cliffs-2-55c43cf683b14e7792e39dbbf5d86e49
+* author:	b_nealie (https://sketchfab.com/b_nealie)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Sea cliffs 2" (https://sketchfab.com/3d-models/sea-cliffs-2-55c43cf683b14e7792e39dbbf5d86e49) by b_nealie (https://sketchfab.com/b_nealie) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

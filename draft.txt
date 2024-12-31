@@ -1,0 +1,6 @@
+  let texture_ft= new THREE.TextureLoader().load('skybox/vz_clear_front.png');
+  let texture_bk= new THREE.TextureLoader().load('skybox/vz_clear_back.png');
+  let texture_up= new THREE.TextureLoader().load('skybox/vz_clear_up.png');
+  let texture_dn= new THREE.TextureLoader().load('skybox/vz_clear_down.png');
+  let texture_rt= new THREE.TextureLoader().load('skybox/vz_clear_left.png');
+  let texture_lt= new THREE.TextureLoader().load('skybox/vz_clear_right.png');

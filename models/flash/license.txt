@@ -1,0 +1,11 @@
+Model Information:
+* title:	Lightning flash propagation
+* source:	https://sketchfab.com/3d-models/lightning-flash-propagation-7520848af47247a9b202085b8990fc8f
+* author:	Advanced Visualization Lab - Indiana University (https://sketchfab.com/AVL)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Lightning flash propagation" (https://sketchfab.com/3d-models/lightning-flash-propagation-7520848af47247a9b202085b8990fc8f) by Advanced Visualization Lab - Indiana University (https://sketchfab.com/AVL) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
