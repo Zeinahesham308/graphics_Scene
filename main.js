@@ -3,25 +3,284 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Water } from 'three/examples/jsm/objects/Water.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import Stats from "three/addons/libs/stats.module.js";
 import GUI from 'lil-gui';
+import { VolumetricFire } from "./CustomFire";
 
 
-
-
+let stats;
 let isNightMode = false; // Initial mode
 let nightModeProgress = 0; // 0: day, 1: night
-const transitionSpeed = 0.005; // Speed of transition
+let transitionSpeed = isNightMode ? 0.05 : 0.01; // Speed of transition
 let isTransitioning = false; // To check if currently transitioning
 
 
 let scene, camera, renderer, water,dolphin,plants,lightningBolt,Yacht;
 let thunderLight, thunderSound, thunderParams,cloud;
 let lightningEnabled = true; // Default state for the GUI toggle
+let fire;
+var clock = new THREE.Clock();
 
 // let clock = new THREE.Clock();
 // let frame = 0;
 const movingClouds = [];
 const minSpacing = 500; // Minimum spacing between clouds
+
+const fires = []; // Array to store all fire instances
+
+function addFire()
+{
+  VolumetricFire.texturePath = "./fire_textures/";
+  var fireWidth = 2;
+  var fireHeight = 4;
+  var fireDepth = 2;
+  var sliceSpacing = 0.5;
+
+  fire = new VolumetricFire(
+    fireWidth,
+    fireHeight,
+    fireDepth,
+    sliceSpacing,
+    camera
+  );
+  scene.add(fire.mesh);
+  // you can set position, rotation and scale
+  // fire.mesh accepts THREE.mesh features
+  fire.mesh.position.set(0, 55, 750);
+  //addCampFire(-200, 220, 20);
+  //fire.mesh.position.set(0, 30, 150);
+  fire.mesh.scale.x = 20;
+  fire.mesh.scale.y = 20;
+  fire.mesh.scale.z = 20;
+}
+
+function addCampFire(positionX = 0, positionZ = 0, scale = 1) {
+  const gltfLoader = new GLTFLoader();
+
+  // Load the campfire model
+  gltfLoader.load('models/campfire/scene.gltf', (gltf) => {
+    const campFire = gltf.scene;
+
+    // Scale and position the campfire
+   
+    campFire.position.set(positionX, 15, positionZ); // Place on the ground level
+    campFire.scale.set(scale, scale, scale);
+    campFire.castShadow = true; // Enable shadows
+    campFire.receiveShadow = true;
+
+    // Ensure all parts of the campfire cast and receive shadows
+    campFire.traverse((child) => {
+      if (child.isMesh) {
+        child.castShadow = true;
+        child.receiveShadow = true;
+      }
+    });
+
+    // Add flickering flame effect if the model includes an emissive material
+    // function animateFlame() {
+    //   campFire.traverse((child) => {
+    //     if (child.isMesh && child.material && child.material.emissive) {
+    //       child.material.emissiveIntensity = 1 + Math.random() * 0.5;
+    //     }
+    //   });
+    //   requestAnimationFrame(animateFlame);
+    // }
+    //animateFlame();
+
+    // Add the campfire to the scene
+    scene.add(campFire);
+  }, undefined, (error) => {
+    console.error('Error loading the campfire model:', error);
+  });
+}
+
+
+
+function addIsland()
+{
+  const islandGroup = new THREE.Group();
+
+  const islandBase = new THREE.CircleGeometry(1500, 1400); // Radius 15, 32 segments
+  const baseMaterial = new THREE.MeshStandardMaterial({ color: 0xf5deb3 }); // Sand color
+  const sandBase = new THREE.Mesh(islandBase, baseMaterial);
+  sandBase.rotation.x = -Math.PI / 2; // Rotate to make it horizontal
+  sandBase.position.y = 0.5; // Slightly above water level
+  sandBase.position.z=-2500;
+  sandBase.position.x=1000;
+  scene.add(sandBase);
+  
+// // Load sand model and place it on the base    //0xA78262  this is same color of snad 
+// const sandLoader = new GLTFLoader().setPath('sand_dunes_gltf/');
+// sandLoader.load('scene.gltf', (gltf) => {
+//     const sand = gltf.scene;
+//     sand.scale.set(15, 7, 15); // Scale as needed
+//     sand.position.set(0, 0, 0); // Base of the island
+//     islandGroup.add(sand);
+// });
+  // Scatter grass models across the sand
+const grassLoader = new GLTFLoader().setPath('grassparts/');
+grassLoader.load('scene.gltf', (gltf) => {
+    const grass = gltf.scene;
+
+    for (let i = 0; i < 1; i++) { // Adjust number of grass patches
+        const clone = grass.clone();
+        clone.scale.set(10, 10, 10); // Adjust size of grass
+        const angle = Math.random() * Math.PI * 2;
+        const radius = Math.random() * 80; // Random radius within the sand base
+        clone.position.set(
+            Math.cos(angle) * radius, // X-coordinate
+            1, // Slightly above the sand
+            Math.sin(angle) * radius  // Z-coordinate
+        );
+        islandGroup.add(clone);
+    }
+});
+  
+  
+const palmLoader = new GLTFLoader().setPath('palm_1_gltf/');
+palmLoader.load('scene.gltf', (gltf) => {
+    const palm = gltf.scene;
+
+    // Outer and inner radii for palm placement
+    const outerRadius = 800; // Outer row radius
+    const innerRadius = 1000; // Inner row radius
+
+    // Define angle range for the half-circle closer to the boat
+    const startAngle = -Math.PI / 2; // -90 degrees
+    const endAngle = Math.PI / 2;   // 90 degrees
+
+    const palmCount = 30; // Number of palms per row (increased for more density)
+
+    for (let i = 0; i < palmCount; i++) {
+        const angle = startAngle + (i / (palmCount - 1)) * (endAngle - startAngle);
+
+        // Outer row palms
+        const outerClone = palm.clone();
+        outerClone.scale.set(1, 1, 1); // Adjust size of the palms
+        outerClone.position.set(
+            Math.cos(angle) * outerRadius, // X-coordinate
+            2, // Place it on the sand level
+            Math.sin(angle) * outerRadius  // Z-coordinate
+        );
+        outerClone.rotation.y = angle + Math.PI / 2; // Rotate palms to face outward
+        islandGroup.add(outerClone);
+
+        // Inner row palms
+        const innerClone = palm.clone();
+        innerClone.scale.set(1, 1, 1); // Adjust size of the palms
+        innerClone.position.set(
+            Math.cos(angle) * innerRadius, // X-coordinate
+            2, // Place it on the sand level
+            Math.sin(angle) * innerRadius  // Z-coordinate
+        );
+        innerClone.rotation.y = angle + Math.PI / 2; // Rotate palms to face outward
+        islandGroup.add(innerClone);
+    }
+});
+
+
+// Add the island group to the scene
+islandGroup.position.set(1000, 0, -2500); // Adjust to place the island above the water
+scene.add(islandGroup);
+
+// Load the human model
+const humanLoader = new GLTFLoader().setPath('free_download_athletic_african_man_walking_223_gltf/');
+humanLoader.load('scene.gltf', (gltf) => {
+    const human = gltf.scene;
+
+    // Ensure the human model casts and receives shadows
+    human.traverse((child) => {
+        if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+        }
+    });
+
+    // Scale and position the human model on the island
+    human.scale.set(0.6, 0.6, 0.6); // Adjust size
+    human.position.set(0, 1, 0); // Place on the sand
+
+    // Add the human model to the island group
+    islandGroup.add(human);
+  });
+}
+
+
+
+
+
+
+
+function addMultipleBoats(count, spacing, startX = 0, startZ = 0, scale = 5) {
+  const gltfLoader = new GLTFLoader();
+
+  gltfLoader.load('models/boat/scene.gltf', (gltf) => {
+    for (let i = 0; i < count; i++) {
+      const boat = gltf.scene.clone(); // Clone the boat model for each instance
+
+      // Adjust the scale and position for each boat
+      boat.scale.set(scale, scale, scale);
+      boat.position.set(startX + i * spacing, 0, startZ); // Adjust position based on spacing
+      boat.castShadow = true;
+      boat.receiveShadow = true;
+
+      // Ensure materials receive shadows
+      boat.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      // Add the boat to the scene
+      scene.add(boat);
+    }
+  }, undefined, (error) => {
+    console.error('Error loading the boat model:', error);
+  });
+}
+function addGrassField(positionX = 0, positionZ = 0, fieldWidth = 500, fieldDepth = 500, grassScale = 5, grassCount = 100, palmCount = 5, palmScale = 10) {
+  const gltfLoader = new GLTFLoader();
+
+  // Load the grass model
+  gltfLoader.load('models/field/scene.gltf', (gltf) => {
+    for (let i = 0; i < grassCount; i++) {
+      const grass = gltf.scene.clone(); // Clone the grass model for each instance
+
+      // Randomize position within the specified field area
+      const randomX = positionX + Math.random() * fieldWidth - fieldWidth / 2;
+      const randomZ = positionZ + Math.random() * fieldDepth - fieldDepth / 2;
+
+      // Adjust scale and position for each grass instance
+      grass.scale.set(grassScale, grassScale, grassScale);
+      grass.position.set(randomX, 0, randomZ); // Place on ground level (y = 0)
+      grass.castShadow = true;
+      grass.receiveShadow = true;
+
+      // Ensure materials receive shadows
+      grass.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      // Add the grass to the scene
+      scene.add(grass);
+    }
+  }, undefined, (error) => {
+    console.error('Error loading the grass model:', error);
+  });
+
+  // Add palm trees
+  for (let i = 0; i < palmCount; i++) {
+    const randomX = positionX + Math.random() * fieldWidth - fieldWidth / 2;
+    const randomZ = positionZ + Math.random() * fieldDepth - fieldDepth / 2;
+
+    addPalm(randomX, randomZ, palmScale);
+  }
+}
+
 
 function addCloud() {
   const gltfLoader = new GLTFLoader();
@@ -126,7 +385,43 @@ function addMultipleClouds(count) {
     });
   }
   
+  function addPalm(positionX = 0, positionZ = 0, scale = 10) {
+    const gltfLoader = new GLTFLoader();
+  
+    // Load the palm model
+    gltfLoader.load('models/palms/scene.gltf', (gltf) => {
+      const palm = gltf.scene;
+  
+      // Adjust scale and position of the palm
+      palm.scale.set(scale, scale, scale);
+      palm.position.set(positionX, 0, positionZ); // Place on ground level (y = 0)
+      palm.castShadow = true; // Enable shadows
+      palm.receiveShadow = true;
+  
+      // Ensure materials receive shadows
+      palm.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+  
+      // Add the palm to the scene
+      scene.add(palm);
+    }, undefined, (error) => {
+      console.error('Error loading the palm model:', error);
+    });
+  }
 function init() {
+
+  // Initialize stats
+  stats = new Stats();
+  stats.showPanel(0); // 0: FPS, 1: ms/frame, 2: memory
+  document.body.appendChild(stats.dom);
+
+
+
+
   // Scene
   scene = new THREE.Scene();
   //scene.fog = new THREE.FogExp2(0x001e0f, 0.0003)
@@ -154,8 +449,8 @@ function init() {
   controls.update();
 
   // Limit zoom levels
-controls.minDistance = 5000; // Minimum zoom (closest to the scene)
-controls.maxDistance = 5000; // Maximum zoom (distance from water level)
+//controls.minDistance = 5000; // Minimum zoom (closest to the scene)
+controls.maxDistance = 5100; // Maximum zoom (distance from water level)
 
 
   // Skybox
@@ -169,7 +464,12 @@ controls.maxDistance = 5000; // Maximum zoom (distance from water level)
     'skybox/vz_clear_back.png',
   ]);
   scene.background = skyboxTexture;
+////////////
 
+
+
+
+//////////
 
 
 
@@ -294,18 +594,30 @@ scene.add(directionalLight);
 
 
  
-addYacht(-800, -50, 2); // Smaller yacht
+//addYacht(-800, -50, 2); // Smaller yacht
 //addPool(-500, -600, 100); // Smaller pool
 
 addMultiplePools(7, 800, -200, -200, 100);
 addRain();
-startNightModeToggle();
+//startNightModeToggle();
+addMultipleBoats(2, 4000, -1000, -2000, 150); // Adds 5 boats with spacing of 300 units along the x-axis
+//addGrassField(1500, 3000, 50, 50, 7, 1);
 
+
+
+
+addFire();
+//addCampFire(-200, 220, 20); // Adds a campfire at (100, 200) with scale 2
+addIsland();
+addCampFire(-200, 220, 20);
   animate();
 }
 
 function animate() {
-  requestAnimationFrame(animate);
+
+
+  stats.begin(); // Start monitoring FPS
+  
   //const deltaTime = clock.getDelta(); // Time since the last frame
   // Animate Water
   if (water.material.uniforms['time']) {
@@ -336,9 +648,26 @@ function animate() {
 
    // Animate clouds
    animateClouds();
+
+
+   //animate fire
+  var elapsed = clock.getElapsedTime();
+  fire.update(elapsed);
+
+
+  // const elapsed = clock.getElapsedTime();
+
+  // // Update all fire instances
+  // fires.forEach((fire) => {
+  //   fire.update(elapsed);
+  // });
+  
+
   //frame++;
   animateRain(); // Animate the rain
   renderer.render(scene, camera);
+  stats.end(); // End monitoring FPS
+  requestAnimationFrame(animate);
 }
 
 function addThunderControls() {
