@@ -260,80 +260,80 @@ birdLoader.load('scene.gltf', (gltf) => {
 
     console.log('Birds loaded and flying animation added successfully');
 });
-// butterflyy
-const butterflyLoader = new GLTFLoader().setPath('butterflies/');
-butterflyLoader.load('scene.gltf', (gltf) => {
-    const butterflyModel = gltf.scene;
+// // butterflyy
+// const butterflyLoader = new GLTFLoader().setPath('butterflies/');
+// butterflyLoader.load('scene.gltf', (gltf) => {
+//     const butterflyModel = gltf.scene;
 
-    const butterflyGeometry = butterflyModel.children[0].geometry;
-    const butterflyMaterial = butterflyModel.children[0].material;
+//     const butterflyGeometry = butterflyModel.children[0].geometry;
+//     const butterflyMaterial = butterflyModel.children[0].material;
 
-    const butterflyCount = 200; // Number of butterflies
-    const butterflies = new THREE.InstancedMesh(butterflyGeometry, butterflyMaterial, butterflyCount);
+//     const butterflyCount = 200; // Number of butterflies
+//     const butterflies = new THREE.InstancedMesh(butterflyGeometry, butterflyMaterial, butterflyCount);
 
-    const positions = []; // Store positions for animation
+//     const positions = []; // Store positions for animation
 
-    for (let i = 0; i < butterflyCount; i++) {
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 30; // Keep them closer to the center
-        const height = Math.random() * 10 + 30; // Higher above the grass (15-25 units)
+//     for (let i = 0; i < butterflyCount; i++) {
+//         const angle = Math.random() * Math.PI * 2;
+//         const radius = Math.random() * 30; // Keep them closer to the center
+//         const height = Math.random() * 10 + 30; // Higher above the grass (15-25 units)
 
-        const position = new THREE.Vector3(
-            Math.cos(angle) * radius, 
-            height, // Higher position to be visible
-            Math.sin(angle) * radius
-        );
+//         const position = new THREE.Vector3(
+//             Math.cos(angle) * radius, 
+//             height, // Higher position to be visible
+//             Math.sin(angle) * radius
+//         );
 
-        const matrix = new THREE.Matrix4();
-        matrix.makeTranslation(position.x, position.y, position.z);
+//         const matrix = new THREE.Matrix4();
+//         matrix.makeTranslation(position.x, position.y, position.z);
 
-        const rotation = new THREE.Matrix4().makeRotationY(Math.random() * Math.PI * 2);
-        const scale = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5); // Increased size (0.5 instead of 0.1)
+//         const rotation = new THREE.Matrix4().makeRotationY(Math.random() * Math.PI * 2);
+//         const scale = new THREE.Matrix4().makeScale(0.5, 0.5, 0.5); // Increased size (0.5 instead of 0.1)
 
-        matrix.multiply(rotation);
-        matrix.multiply(scale);
+//         matrix.multiply(rotation);
+//         matrix.multiply(scale);
 
-        butterflies.setMatrixAt(i, matrix);
-        positions.push(position); // Save initial positions
-    }
+//         butterflies.setMatrixAt(i, matrix);
+//         positions.push(position); // Save initial positions
+//     }
 
-    butterflies.castShadow = true;
-    butterflies.receiveShadow = false; // Butterflies don't need to receive shadows
-    scene.add(butterflies);
+//     butterflies.castShadow = true;
+//     butterflies.receiveShadow = false; // Butterflies don't need to receive shadows
+//     scene.add(butterflies);
 
-    // Animate butterflies
-    const clock = new THREE.Clock();
-    function animateButterflies() {
-        const time = clock.getElapsedTime();
+//     // Animate butterflies
+//     const clock = new THREE.Clock();
+//     function animateButterflies() {
+//         const time = clock.getElapsedTime();
 
-        for (let i = 0; i < butterflyCount; i++) {
-            const position = positions[i];
-            const matrix = new THREE.Matrix4();
+//         for (let i = 0; i < butterflyCount; i++) {
+//             const position = positions[i];
+//             const matrix = new THREE.Matrix4();
 
-            // Update position with a sine wave motion
-            const offsetY = Math.sin(time * 2 + i) * 0.5; // Flapping effect
-            const offsetX = Math.sin(time + i) * 0.2;     // Horizontal drift
-            const offsetZ = Math.cos(time + i) * 0.2;     // Horizontal drift
+//             // Update position with a sine wave motion
+//             const offsetY = Math.sin(time * 2 + i) * 0.5; // Flapping effect
+//             const offsetX = Math.sin(time + i) * 0.2;     // Horizontal drift
+//             const offsetZ = Math.cos(time + i) * 0.2;     // Horizontal drift
 
-            position.y += offsetY * 0.01; // Slight vertical motion
-            position.x += offsetX * 0.01; // Slight horizontal motion
-            position.z += offsetZ * 0.01; // Slight horizontal motion
+//             position.y += offsetY * 0.01; // Slight vertical motion
+//             position.x += offsetX * 0.01; // Slight horizontal motion
+//             position.z += offsetZ * 0.01; // Slight horizontal motion
 
-            matrix.makeTranslation(position.x, position.y, position.z);
-            const rotation = new THREE.Matrix4().makeRotationY(time + i);
-            matrix.multiply(rotation);
+//             matrix.makeTranslation(position.x, position.y, position.z);
+//             const rotation = new THREE.Matrix4().makeRotationY(time + i);
+//             matrix.multiply(rotation);
 
-            butterflies.setMatrixAt(i, matrix);
-        }
+//             butterflies.setMatrixAt(i, matrix);
+//         }
 
-        butterflies.instanceMatrix.needsUpdate = true; // Update instance matrix
-    }
+//         butterflies.instanceMatrix.needsUpdate = true; // Update instance matrix
+//     }
 
-    renderer.setAnimationLoop(() => {
-        animateButterflies();
-        render();
-    });
-});
+//     renderer.setAnimationLoop(() => {
+//         animateButterflies();
+//         render();
+//     });
+// });
 
 
     // Water setup
@@ -401,9 +401,9 @@ butterflyLoader.load('scene.gltf', (gltf) => {
     // Orbit controls setup
     controls = new OrbitControls(camera, renderer.domElement);
     controls.maxPolarAngle = Math.PI * 0.495;
-    controls.target.set(0, 1.5, 0); // Focus on giraffe
-    controls.minDistance = 40.0;
-    controls.maxDistance = 200.0;
+    controls.target.set(0, 1.5, 0); 
+    // controls.minDistance = 40.0;
+    // controls.maxDistance = 200.0;
     controls.update();
 
     // Stats setup
