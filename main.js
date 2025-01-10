@@ -3,6 +3,8 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { Water } from 'three/examples/jsm/objects/Water.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
+import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
+
 import Stats from "three/addons/libs/stats.module.js";
 import GUI from 'lil-gui';
 import { VolumetricFire } from "./CustomFire";
@@ -412,6 +414,251 @@ function addMultipleClouds(count) {
       console.error('Error loading the palm model:', error);
     });
   }
+
+
+
+
+
+
+// Add dancing character
+// Add dancing character with movement
+function addHipHopDancer(positionX = 0, positionY = 0, positionZ = 0, scale = 5) {
+  const loader = new FBXLoader(); // Use FBXLoader for .fbx files
+
+  // Load the HipHopDancing FBX file
+  loader.load(
+    'models/dance/HipHopDancing.fbx', 
+    (fbx) => {
+      // Scale and position the dancer
+      fbx.scale.set(scale, scale, scale);
+      fbx.position.set(positionX, positionY, positionZ); // Position based on input
+
+      // Ensure all parts of the dancer model cast and receive shadows
+      fbx.traverse((child) => {
+        if (child.isMesh) {
+          child.castShadow = true;
+          child.receiveShadow = true;
+        }
+      });
+
+      // Add the dancer to the scene
+      scene.add(fbx);
+      console.log('HipHopDancing model added to the scene.');
+
+      // Add animation mixer for movement
+      const mixer = new THREE.AnimationMixer(fbx);
+
+      // Load animations embedded in the FBX file
+      if (fbx.animations && fbx.animations.length > 0) {
+        const action = mixer.clipAction(fbx.animations[0]);
+        action.play();
+      } else {
+        console.warn('No animations found in the FBX file.');
+      }
+
+      // Update the animation in the main render loop
+      const clock = new THREE.Clock();
+
+      function animateDancer() {
+        const delta = clock.getDelta(); // Get time delta for smooth animation
+        mixer.update(delta); // Update animation mixer
+        requestAnimationFrame(animateDancer); // Loop animation
+      }
+
+      animateDancer(); // Start the animation loop
+    },
+    (xhr) => {
+      console.log(`HipHopDancing model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+      console.error('Error loading the HipHopDancing model:', error);
+    }
+  );
+}
+function addBeachChairs(positionX = 0, positionZ = 0, spacing = 10, count = 5, scale = 1) {
+  const loader = new GLTFLoader(); // Use GLTFLoader for .gltf files
+
+  // Load the beach chair model
+  loader.load(
+    'models/beach chairs/scene.gltf',
+    (gltf) => {
+      for (let i = 0; i < count; i++) {
+        const beachChair = gltf.scene.clone(); // Clone the chair for each instance
+
+        // Scale and position the chair
+        beachChair.scale.set(scale, scale, scale);
+        beachChair.position.set(positionX + i * spacing, 5, positionZ); // Line them up with spacing
+        beachChair.castShadow = true; // Enable shadows
+        beachChair.receiveShadow = true;
+
+        // Ensure all parts of the chair model cast and receive shadows
+        beachChair.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        // Add the chair to the scene
+        scene.add(beachChair);
+      }
+      console.log('Beach chairs added to the scene.');
+    },
+    (xhr) => {
+      console.log(`Beach chair model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+      console.error('Error loading the beach chair model:', error);
+    }
+  );
+}
+function addDecor( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count = 1, spacingX = 10, spacingZ = 10) {
+  const loader = new GLTFLoader(); // Use GLTFLoader for .gltf files
+
+  loader.load(
+    'models/decor/scene.gltf', // Path to the decor model
+    (gltf) => {
+      for (let i = 0; i < count; i++) {
+        const decorItem = gltf.scene.clone(); // Clone the decor model for each instance
+
+        // Calculate positions for multiple decor items
+        const offsetX = i * spacingX;
+        const offsetZ = i * spacingZ;
+
+        // Scale and position the decor item
+        decorItem.scale.set(scale, scale, scale);
+        decorItem.position.set(positionX + offsetX, positionY, positionZ + offsetZ);
+        decorItem.castShadow = true; // Enable shadows
+        decorItem.receiveShadow = true;
+
+        // Ensure all parts of the decor model cast and receive shadows
+        decorItem.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        // Add the decor item to the scene
+        scene.add(decorItem);
+      }
+      console.log(`Decor items from ${modelPath} added to the scene.`);
+    },
+    (xhr) => {
+      console.log(`Decor model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+      console.error(`Error loading the decor model from ${modelPath}:`, error);
+    }
+  );
+}
+function addRust( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count = 1, spacingX = 10, spacingZ = 10) {
+  const loader = new GLTFLoader(); // Use GLTFLoader for .gltf files
+
+  loader.load(
+    'models/rust/scene.gltf', // Path to the rust model
+    (gltf) => {
+      for (let i = 0; i < count; i++) {
+        const rustObject = gltf.scene.clone(); // Clone the rust model for each instance
+
+        // Calculate positions for multiple rust objects
+        const offsetX = i * spacingX;
+        const offsetZ = i * spacingZ;
+
+        // Scale and position the rust object
+        rustObject.scale.set(scale, scale, scale);
+        rustObject.position.set(positionX + offsetX, positionY, positionZ + offsetZ);
+        rustObject.castShadow = true; // Enable shadows
+        rustObject.receiveShadow = true;
+
+        // Ensure all parts of the rust model cast and receive shadows
+        rustObject.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        // Add the rust object to the scene
+        scene.add(rustObject);
+      }
+      console.log(`Rust objects from ${modelPath} added to the scene.`);
+    },
+    (xhr) => {
+      console.log(`Rust model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+      console.error(`Error loading the rust model from ${modelPath}:`, error);
+    }
+  );
+}
+
+
+function addSpeakers( 
+  positionX = 0, 
+  positionY = 0, 
+  positionZ = 0, 
+  scale = 1, 
+  count = 1, 
+  spacingX = 10, 
+  spacingZ = 10, 
+  rotationX = 0, 
+  rotationY = 0, 
+  rotationZ = 0
+) {
+  const loader = new GLTFLoader(); // Use GLTFLoader for .gltf files
+
+  loader.load(
+   'models/speakers/scene.gltf', // Path to the speaker model
+    (gltf) => {
+      for (let i = 0; i < count; i++) {
+        const speaker = gltf.scene.clone(); // Clone the speaker model for each instance
+
+        // Calculate positions for multiple speakers
+        const offsetX = i * spacingX;
+        const offsetZ = i * spacingZ;
+
+        // Scale and position the speaker
+        speaker.scale.set(scale, scale, scale);
+        speaker.position.set(positionX + offsetX, positionY, positionZ + offsetZ);
+        speaker.rotation.set(rotationX, rotationY, rotationZ); // Set rotation angles
+        speaker.castShadow = true; // Enable shadows
+        speaker.receiveShadow = true;
+
+        // Ensure all parts of the speaker model cast and receive shadows
+        speaker.traverse((child) => {
+          if (child.isMesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        // Add the speaker to the scene
+        scene.add(speaker);
+
+        // Add a spotlight for each speaker
+        const speakerLight = new THREE.SpotLight(0xffffff, 1, 100, Math.PI / 4, 1, 2); // White spotlight
+        speakerLight.position.set(positionX + offsetX, positionY + 10, positionZ + offsetZ); // Place light above speaker
+        speakerLight.target.position.set(positionX + offsetX, positionY, positionZ + offsetZ); // Aim light at the speaker
+        speakerLight.castShadow = true; // Enable shadows from the light
+
+        // Add the light and its target to the scene
+        scene.add(speakerLight);
+        scene.add(speakerLight.target);
+      }
+      console.log('Speakers with lights and rotation added to the scene.');
+    },
+    (xhr) => {
+      console.log(`Speaker model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
+    },
+    (error) => {
+      console.error('Error loading the speaker model:', error);
+    }
+  );
+}
+
+
+  
 function init() {
 
   // Initialize stats
@@ -610,8 +857,47 @@ addFire();
 //addCampFire(-200, 220, 20); // Adds a campfire at (100, 200) with scale 2
 addIsland();
 addCampFire(-200, 220, 20);
-  animate();
+
+
+addHipHopDancer(0, 8,225, 0.5); // Example: Places the dancer at (0, -200) with scale 10
+addBeachChairs(-300, -2500, 200, 10, 100); // Adds 10 chairs with 15 units of spacing, scaled by 2
+addDecor(0, 0, -3000, 5, 1,0, 500); // Adds 5 decor items spaced 20 units apart
+//function addDecor( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count = 1, spacingX = 10, spacingZ = 10)
+addRust(-4000, -299, -3500, 50, 2, 200); // Adds 5 rust objects spaced 20 units apart
+//function addRust( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count = 1, spacingX = 10, spacingZ = 10)
+//addSpeakers(-300, 0, -3000, 5, 1,0, 500);
+
+
+addSpeakers(600, 0, -3500, 5, 1, 1,15, 0, Math.PI / 2, 0); 
+// Rotates speakers 45 degrees around the X-axis and 90 degrees around the Y-axis
+
+
+// function addSpeakers( 
+//   positionX = 0, 
+//   positionY = 0, 
+//   positionZ = 0, 
+//   scale = 1, 
+//   count = 1, 
+//   spacingX = 10, 
+//   spacingZ = 10, 
+//   rotationX = 0, 
+//   rotationY = 0, 
+//   rotationZ = 0
+// )
+
+
+animate();
+
+
+
+
 }
+
+
+
+
+
+
 
 function animate() {
 
