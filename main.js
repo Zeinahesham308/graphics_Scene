@@ -4,7 +4,14 @@ import { Water } from 'three/examples/jsm/objects/Water.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-import Stats from "three/addons/libs/stats.module.js";
+import Stats from 'stats.js';
+
+
+
+
+
+//import Stats from "three/addons/libs/stats.module.js";
+
 import GUI from 'lil-gui';
 import { VolumetricFire } from "./CustomFire";
 
@@ -60,7 +67,7 @@ function addCampFire(positionX = 0, positionZ = 0, scale = 1) {
   const gltfLoader = new GLTFLoader();
 
   // Load the campfire model
-  gltfLoader.load('models/campfire/scene.gltf', (gltf) => {
+  gltfLoader.load('./models/campfire/scene.gltf', (gltf) => {
     const campFire = gltf.scene;
 
     // Scale and position the campfire
@@ -186,7 +193,7 @@ islandGroup.position.set(1000, 0, -2500); // Adjust to place the island above th
 scene.add(islandGroup);
 
 // Load the human model
-const humanLoader = new GLTFLoader().setPath('free_download_athletic_african_man_walking_223_gltf/');
+const humanLoader = new GLTFLoader().setPath('./free_download_athletic_african_man_walking_223_gltf/');
 humanLoader.load('scene.gltf', (gltf) => {
     const human = gltf.scene;
 
@@ -216,7 +223,7 @@ humanLoader.load('scene.gltf', (gltf) => {
 function addMultipleBoats(count, spacing, startX = 0, startZ = 0, scale = 5) {
   const gltfLoader = new GLTFLoader();
 
-  gltfLoader.load('models/boat/scene.gltf', (gltf) => {
+  gltfLoader.load('./models/boat/scene.gltf', (gltf) => {
     for (let i = 0; i < count; i++) {
       const boat = gltf.scene.clone(); // Clone the boat model for each instance
 
@@ -245,7 +252,7 @@ function addGrassField(positionX = 0, positionZ = 0, fieldWidth = 500, fieldDept
   const gltfLoader = new GLTFLoader();
 
   // Load the grass model
-  gltfLoader.load('models/field/scene.gltf', (gltf) => {
+  gltfLoader.load('./models/field/scene.gltf', (gltf) => {
     for (let i = 0; i < grassCount; i++) {
       const grass = gltf.scene.clone(); // Clone the grass model for each instance
 
@@ -703,12 +710,12 @@ controls.maxDistance = 5100; // Maximum zoom (distance from water level)
   // Skybox
   const loader = new THREE.CubeTextureLoader();
   const skyboxTexture = loader.load([
-    'skybox/vz_clear_right.png',
-    'skybox/vz_clear_left.png',
-    'skybox/vz_clear_up.png',
-    'skybox/vz_clear_down.png',
-    'skybox/vz_clear_front.png',
-    'skybox/vz_clear_back.png',
+    './skybox/vz_clear_right.png',
+    './skybox/vz_clear_left.png',
+    './skybox/vz_clear_up.png',
+    './skybox/vz_clear_down.png',
+    './skybox/vz_clear_front.png',
+    './skybox/vz_clear_back.png',
   ]);
   scene.background = skyboxTexture;
 ////////////
@@ -726,7 +733,7 @@ controls.maxDistance = 5100; // Maximum zoom (distance from water level)
   water = new Water(waterGeometry, {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load('textures/waternormals.jpg', (texture) => {
+    waterNormals: new THREE.TextureLoader().load('./textures/waternormals.jpg', (texture) => {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     }),
     sunDirection: new THREE.Vector3(1, 1, 0), // Direction of light for reflections
@@ -759,7 +766,7 @@ scene.add(directionalLight);
 
   // Load Dolphin Model
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load('models/dolphin/scene.gltf', (gltf) => {
+  gltfLoader.load('./dolphin/scene.gltf', (gltf) => {
     dolphin = gltf.scene;
   
     // Scale and position the dolphin
@@ -1010,7 +1017,7 @@ function addYacht(positionX = 0, positionZ = 0, scale = 5) {
   const gltfLoader = new GLTFLoader();
 
   // Load the yacht model
-  gltfLoader.load('models/yacht/scene.gltf', (gltf) => {
+  gltfLoader.load('./models/yacht/scene.gltf', (gltf) => {
     Yacht = gltf.scene;
 
     // Adjust scale and position of the yacht

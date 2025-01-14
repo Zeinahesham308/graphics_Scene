@@ -1,0 +1,11 @@
+Model Information:
+* title:	grass field
+* source:	https://sketchfab.com/3d-models/grass-field-779f6f69c94b4f15b65f28022550af58
+* author:	Rei (https://sketchfab.com/Rei-i)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "grass field" (https://sketchfab.com/3d-models/grass-field-779f6f69c94b4f15b65f28022550af58) by Rei (https://sketchfab.com/Rei-i) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

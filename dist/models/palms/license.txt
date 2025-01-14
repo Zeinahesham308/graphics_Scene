@@ -1,0 +1,11 @@
+Model Information:
+* title:	palm dan
+* source:	https://sketchfab.com/3d-models/palm-dan-0501d2deffde4cdb9a5cf5fecd128302
+* author:	marcolinadesign (https://sketchfab.com/marcolinadesign)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "palm dan" (https://sketchfab.com/3d-models/palm-dan-0501d2deffde4cdb9a5cf5fecd128302) by marcolinadesign (https://sketchfab.com/marcolinadesign) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
