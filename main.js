@@ -616,7 +616,7 @@ function addSpeakers(
   const loader = new GLTFLoader(); // Use GLTFLoader for .gltf files
 
   loader.load(
-   'models/speakers/scene.gltf', // Path to the speaker model
+   './models/speakers/scene.gltf', // Path to the speaker model
     (gltf) => {
       for (let i = 0; i < count; i++) {
         const speaker = gltf.scene.clone(); // Clone the speaker model for each instance
@@ -697,7 +697,7 @@ function init() {
   controls.enableDamping = true;
 
   // Limit vertical movement (lock at water level)
-  controls.minPolarAngle = Math.PI / 3; // Limit to horizontal and above
+  controls.minPolarAngle = Math.PI / 2; // Limit to horizontal and above
   controls.maxPolarAngle = Math.PI / 2; // Lock to horizontal view
   controls.target.set(0, waterLevel, 0); // Focus at the water level
   controls.update();
@@ -722,17 +722,11 @@ controls.maxDistance = 5100; // Maximum zoom (distance from water level)
 
 
 
-
-//////////
-
-
-
-
-  // Water Geometry and Shader
-  const waterGeometry = new THREE.PlaneGeometry(10000, 10000, 128, 128);
+  // Water Geometry 
+  const waterGeometry = new THREE.PlaneGeometry(1000000, 10000000, 128, 128);
   water = new Water(waterGeometry, {
-    textureWidth: 512,
-    textureHeight: 512,
+    textureWidth: 2020,
+    textureHeight: 1024,
     waterNormals: new THREE.TextureLoader().load('./textures/waternormals.jpg', (texture) => {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     }),
@@ -740,13 +734,11 @@ controls.maxDistance = 5100; // Maximum zoom (distance from water level)
     sunColor: 0xffffff,
     waterColor: 0x001e0f,
     distortionScale: 3.7,
-    fog: false, // Skybox doesn’t use fog
+    fog: false, 
   });
   water.rotation.x = -Math.PI / 2; // Lay the water horizontally
   water.position.y = 0; // Place the water at ground level
   scene.add(water);
-
-
 
 
 
@@ -1173,17 +1165,15 @@ function updateNightModeProperties(progress) {
   const currentWaterColor = dayWaterColor.clone().lerp(nightWaterColor, progress);
   water.material.uniforms['waterColor'].value.copy(currentWaterColor);
 
-  // Update sun color
+
   const daySunColor = new THREE.Color(0xffffff);
   const nightSunColor = new THREE.Color(0x111122);
   const currentSunColor = daySunColor.clone().lerp(nightSunColor, progress);
   water.material.uniforms['sunColor'].value.copy(currentSunColor);
 
-  // Update light intensity
   directionalLight.intensity = 1 - progress; // Day: 1, Night: 0
   ambientLight.intensity = 0.5 - 0.4 * progress; // Day: 0.5, Night: 0.1
 
-  // Update cloud visibility
   movingClouds.forEach((cloud) => {
     cloud.visible = progress < 0.5; // Fully hidden at night
   });
