@@ -4,10 +4,10 @@ import { Water } from 'three/examples/jsm/objects/Water.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { OBJLoader } from 'three/examples/jsm/loaders/OBJLoader.js';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader.js';
-
 import Stats from "three/addons/libs/stats.module.js";
 import GUI from 'lil-gui';
 import { VolumetricFire } from "./CustomFire";
+
 
 
 let stats;
@@ -349,7 +349,7 @@ function addSeaCliff() {
 
 function animateClouds() {
   movingClouds.forEach((cloud) => {
-    cloud.position.x += cloud.userData.speed * cloud.userData.direction; // Move cloud
+    cloud.position.x += cloud.userData.speed*1.5 * cloud.userData.direction; // Move cloud
     if (cloud.position.x > 500) {
       cloud.position.x = -500; // Reset position when out of bounds
     } else if (cloud.position.x < -500) {
@@ -542,13 +542,13 @@ function addDecor( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count
         // Add the decor item to the scene
         scene.add(decorItem);
       }
-      console.log(`Decor items from ${modelPath} added to the scene.`);
+      console.log(`Decor items   added to the scene.`);
     },
     (xhr) => {
       console.log(`Decor model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
     },
     (error) => {
-      console.error(`Error loading the decor model from ${modelPath}:`, error);
+      console.error(`Error loading the decor model :`, error);
     }
   );
 }
@@ -582,13 +582,13 @@ function addRust( positionX = 0, positionY = 0, positionZ = 0, scale = 1, count 
         // Add the rust object to the scene
         scene.add(rustObject);
       }
-      console.log(`Rust objects from ${modelPath} added to the scene.`);
+      console.log(`Rust objects from  added to the scene.`);
     },
     (xhr) => {
       console.log(`Rust model loading progress: ${(xhr.loaded / xhr.total) * 100}%`);
     },
     (error) => {
-      console.error(`Error loading the rust model from ${modelPath}:`, error);
+      console.error(`Error loading the rust model from :`, error);
     }
   );
 }
