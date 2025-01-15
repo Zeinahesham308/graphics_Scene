@@ -758,7 +758,7 @@ scene.add(directionalLight);
 
   // Load Dolphin Model
   const gltfLoader = new GLTFLoader();
-  gltfLoader.load('./dolphin/scene.gltf', (gltf) => {
+  gltfLoader.load('./models/dolphin/scene.gltf', (gltf) => {
     dolphin = gltf.scene;
   
     // Scale and position the dolphin
